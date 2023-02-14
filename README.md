@@ -17,9 +17,9 @@
 
 В приложении используются пакеты:
 
-- [viper](github.com/spf13/viper) для работы с конфигурационными файлами
-- [spreadsheet.v2](gopkg.in/Iwark/spreadsheet.v2) для взаимодействия с Google Doc API
-- [colly](github.com/gocolly/colly/v2) для парсинга HTML файлов
+- [viper](https://github.com/spf13/viper) для работы с конфигурационными файлами
+- [spreadsheet.v2](https://gopkg.in/Iwark/spreadsheet.v2) для взаимодействия с Google Doc API
+- [colly](https://github.com/gocolly/colly) для парсинга HTML файлов
 
 ## Скриншоты:
 C данной HTML таблицы парсятся данные:
