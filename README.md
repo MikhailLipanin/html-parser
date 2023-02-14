@@ -2,6 +2,8 @@
 
 Консольное приложение, которое парсит таблицу с данными в указанном HTML и заполняет эти данные в Google Таблицу.
 
+Ссылка на Google таблицу: https://docs.google.com/spreadsheets/d/12MWHmBNFWFuFjXY3N2BlGw2o9w_lPfQrj3SPuNF7XZI/edit#gid=0
+
 ## Cхема работы
 
 1. Приложение парсит данные с HTML таблички
