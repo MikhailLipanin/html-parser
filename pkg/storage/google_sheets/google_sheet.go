@@ -13,6 +13,7 @@ import (
 
 type cell struct {
 	value string
+	id    string
 	row   int
 }
 
@@ -44,10 +45,13 @@ func New() (*GoogleSheet, error) {
 		return nil, errors.New(fmt.Sprintf("Error in getting Google Sheet by id: %s", err.Error()))
 	}
 
-	return &GoogleSheet{
+	ret := &GoogleSheet{
 		sheet: sheet,
 		data:  make(map[string]*cell),
-	}, nil
+	}
+	_ = ret.ReadAllContent()
+
+	return ret, nil
 }
 
 func (sh *GoogleSheet) ReadAllContent() []parsing.ErrorType {
@@ -55,6 +59,11 @@ func (sh *GoogleSheet) ReadAllContent() []parsing.ErrorType {
 	for i, _ := range sh.sheet.Rows {
 		if len(sh.sheet.Rows[i]) < 2 {
 			break
+		}
+		sh.data[sh.sheet.Rows[i][0].Value] = &cell{
+			value: sh.sheet.Rows[i][1].Value,
+			id:    sh.sheet.Rows[i][0].Value,
+			row:   i,
 		}
 		res = append(res, parsing.ErrorType{
 			Id:      sh.sheet.Rows[i][0].Value,
@@ -80,8 +89,10 @@ func (sh *GoogleSheet) UpdateValById(id, newVal string) error {
 		return errors.New(fmt.Sprintf("Error in Updating Sheet Cell at id: %s --- this id is absent", id))
 	}
 	sh.data[id].value = newVal
+	sh.data[id].id = id
 
 	// Update cell content
+	sh.sheet.Update(sh.data[id].row, 0, id)
 	sh.sheet.Update(sh.data[id].row, 1, newVal)
 
 	// Make sure call Synchronize to reflect the changes
@@ -96,8 +107,10 @@ func (sh *GoogleSheet) UpdateValById(id, newVal string) error {
 func (sh *GoogleSheet) AddValById(id, newVal string) error {
 	sz := len(sh.data)
 
-	sh.data[id].value = newVal
-	sh.data[id].row = sz
+	sh.data[id] = &cell{
+		value: newVal,
+		row:   sz,
+	}
 
 	err := sh.UpdateValById(id, newVal)
 	if err != nil {
@@ -113,6 +126,11 @@ func (sh *GoogleSheet) DeleteById(id string) error {
 	if err != nil {
 		return errors.New(fmt.Sprintf("Error in Deleting Sheet Cell: %s", err.Error()))
 	}
-	delete(sh.data, "id")
+	delete(sh.data, id)
+	// Make sure call Synchronize to reflect the changes
+	/*err = sh.sheet.Synchronize()
+	if err != nil {
+		return errors.New(fmt.Sprintf("Error in reflecting the changes of the sheet: %s", err.Error()))
+	}*/
 	return nil
 }
